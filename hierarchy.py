@@ -1,58 +1,58 @@
 #!/usr/bin/env python3
+""" Code to represent a family from a file of people and node IDs """
 
 import sys
 
-fyle = sys.argv[1]
-
-nodez = {}  # quick access to each node
-eldest = None
 
 class Family(object):
-    global nodez, eldest
-    def __init__(self, parent_id,node_id,node_name):
+    """ class to represent the family """
+    def __init__(self, parent_id, node_id, node_name):
         self.parent_id = parent_id
         self.node_id = node_id
+        self.children = []
         self.node_name = node_name
+
+def dotree(person, level):
+    """ recursive tree walk function to display family structure --
+        trees of this structure are much easier to code recursively
+        than iteratively """
+    for x in range(level):
+        print(' ', end='')
+    print(person.node_name)
+    for c in person.children:
+        dotree(c, level+1)
 
 def main():
 
+    nodez = {}     # quick access to each Family object
+    try:
+        fyle = sys.argv[1]
+    except IndexError:
+        print('usage: ./hierarchy.py data.in')
+        sys.exit(1)
+
+    eldest = None  # the root 'grandfather' object
+
     f = open(fyle)
 
-    members = []
-    maxnode = -1
+
     for line in f:
         fields = line.rstrip().split('|')
-        print(fields)
         for field in fields:
             try:
                 (parent, node, name) = field.split(',')
-            except:
+            except ValueError:
                 continue
-            fam = Family(parent,node,name)
+            fam = Family(parent, node, name)
             nodez[node] = fam
-            if int(node) > maxnode:
-                maxnode = int(node)
             if parent == 'null':
-                print('ELDEST')
                 eldest = fam
-
-            members.append(fam)
-
-
-    #bottom = nodez[maxnode]
+            else:
+                nodez[parent].children.append(fam)
 
 
-    print(eldest.node_name)
-    for parid in range(0,6):
-        print('level ', parid)
-        for mem in members:
-            if mem.parent_id != 'null':
-                if int(mem.parent_id) == parid:
-                    print(mem.node_name,end = ' ')
-        print('\n')
+
+    dotree(eldest, 0)
 
 if __name__ == "__main__":
     main()
-
-
-        
