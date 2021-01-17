@@ -9,3 +9,8 @@ This version is restructured significantly:
 
 This one should run on the order of O(n), unlike the first version of O(WTF? -- not even focused on this)
 
+To run:
+
+python3 ./hierarchy.py data.in
+
+Clearly: this hasn't been extensively tested, with just the one record. :-)
